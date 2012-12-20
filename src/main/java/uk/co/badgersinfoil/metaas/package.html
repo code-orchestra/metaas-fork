@@ -1,0 +1,35 @@
+<!--
+	package.html
+	
+	Copyright (c) 2008 David Holroyd
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<html>
+<body>
+<p>The <a href="http://www.badgers-in-foil.co.uk/projects/metaas/">metaas</a>
+ActionScript source code generation / manipulation framework.</p>
+
+<p>The key class in the framework is {@link uk.co.badgersinfoil.metaas.ActionScriptFactory}, which can:</p>
+<ul>
+  <li>create concrete instances of the various interfaces the framework provides</li>
+  <li>parse an existing ActionScript file into a set of metaas objects</li>
+  <li>'serialize' a set of metaas objects back into an ActionScript source file</li>
+</ul>
+
+<p>Many parts of the framework may potentially raise
+{@link uk.co.badgersinfoil.metaas.SyntaxException} on encountering invalid
+ActionScript.  Note that this is limited to checks on syntax; semantic
+checking (e.g. type-checks) is not performed.</p>
+</body>
+</html>

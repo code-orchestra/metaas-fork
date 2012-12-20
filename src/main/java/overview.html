@@ -1,0 +1,211 @@
+<!--
+	overview.html
+	
+	Copyright (c) 2008 David Holroyd
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<html>
+<body>
+
+<p><a href="http://www.badgers-in-foil.co.uk/projects/metaas/">metaas</a>
+provides Java applications with a 'Document Object Model' for
+ActionScript 3 code. Its primary function is generating code, but it allows
+existing .as source files to be loaded, and simple modifications to be
+made.</p>
+
+<ul>
+  <li><a href="#getting_started">Getting Started</a></li>
+  <li><a href="#semicolon_handling">Semicolon Handling</a></li>
+  <li><a href="#import_management">Import Management</a></li>
+  <li><a href="#syntax_errors">Syntax Errors</a></li>
+  <li><a href="#code_inspection">Code Inspection</a></li>
+  <li><a href="#documentation_comments">Documentation Comments</a></li>
+</ul>
+
+<a name="getting_started"></a><h2>Getting Started</h2>
+
+<p>Here is a minimal example that generates a simple file in the current
+directory:</p>
+<pre class="eg">ActionScriptFactory fact = new ActionScriptFactory();
+ActionScriptProject proj = fact.newEmptyASProject(".");
+ASCompilationUnit unit = proj.newClass("Test");
+ASClassType clazz = (ASClassType)unit.getType();
+ASMethod meth = clazz.newMethod("test", Visibility.PUBLIC, "void");
+meth.addStmt("trace('Hello world')");
+proj.writeAll();</pre>
+
+<p>The expression <code>proj.newClass("Test")</code> generates the
+following ActionScript code,</p>
+
+<pre class="eg">package {
+	public class Test {
+	}
+}</pre>
+
+<p>Then, the expression <code>clazz.newMethod("test", Visibility.PUBLIC, "void")</code>
+adds a method definition to the body of the class as follows,</p>
+
+<pre class="eg">
+		public function test():void {
+		}</pre>
+
+The statement <code>meth.addStatement("trace('Hello world')")</code> then
+adds a line of ActionScript code to the method body (notice that a ';' was
+added),
+
+<pre class="eg">
+			trace('Hello world');</pre>
+
+<p>Finally, <code>proj.writeAll()</code> cases a file called Test.as to be
+written to the current folder, containing the complete code,</p>
+
+<pre class="eg">package {
+	public class Test {
+		public function test():void {
+			trace('Hello world');
+		}
+	}
+}</pre>
+
+<a name="semicolon_handling"></a><h2>Semicolon Handling</h2>
+
+<p>The <code>addStatement()</code> method can be passed an ActionScript
+statement with or without a final semicolon, and one will be added to the
+output if required.  Standard metaas usage is to skip the implied semicolon
+at the end of statements created with <code>addStatement()</code>, as this
+makes the resulting Java code look nicer.</p>
+
+<a name="import_management"></a><h2>Import Management</h2>
+
+<p>The standard facility for dealing with imports is via the methods available
+in {@link uk.co.badgersinfoil.metaas.dom.ASPackage}.</p>
+
+<p>When code is being contributed to a file by disparate parts of your
+application, arranging for <code>addImport()</code> to be called for everthing
+required can be fiddly.  Therefore, metaas provides an 'auto import' feature
+to try and simplify this task.</p>
+
+<p>To make use of auto-imports, ensure that all code is generated with
+'fully qualified' references to other types (i.e. include the package-prefix
+on all references to class names).  For instance,</p>
+
+<pre class="eg">meth.addStatement("com.example.util.Debug.trace('Hello world')");</pre>
+
+<p>When you call the method {@link uk.co.badgersinfoil.metaas.ActionScriptProject#performAutoImport()}, all
+compilation units in the project will be inspected for references like this
+and where metaas can find a type defined <strong>within the project</strong>
+which has a matching name, it will</p>
+<ol>
+  <li>Add an import statement to the package (in the example, this would be
+  <code>import com.example.util.Debug;</code>)</li>
+  <li>Contract occurances of the type-name within the code to the unqualified
+  form (in the example, the line would become just
+  <code>Debug.trace('Hello world');</code>)</li>
+</ol>
+
+<h3>Importing External Definitions</h3>
+
+<p>If you want to handle references to elements outside the project classes
+(being generated), you will need to add a reference to this exteral code into
+the project's 'classpath'.  Classpath elements can be source folders or
+<code>.swc</code> files, and are added to the project using
+{@link uk.co.badgersinfoil.metaas.ActionScriptProject#addClasspathEntry(String)}.</p>
+
+<p>For example, to allow the auto-import process to see the definitions of the
+standard Flash classes, add a reference to the standard library component
+provided with Flex 2 (using the proper path to the Flex installation on your
+system):</p>
+
+<pre class="eg">project.addClasspathEntry("/opt/flex_sdk_2/frameworks/libs/playerglobal.swc")</pre>
+
+<a name="syntax_errors"></a><h2>Syntax Errors</h2>
+
+<p>metaas tries to enforce ActionScript syntax rules.  For instance, the
+following code,</p>
+
+<pre class="eg">meth.addStmt("trace(i]");</pre>
+
+<p>Will raise the a {@link uk.co.badgersinfoil.metaas.SyntaxException}:</p>
+
+<pre>uk.co.badgersinfoil.metaas.SyntaxException: Unexpected token RBRACK (expecting RPAREN) in "trace(i]"</pre>
+
+
+<a name="code_inspection"></a><h2>Code Inspection</h2>
+
+<p>To read code from the file 'Test.as' you can use the following snippet of
+Java:</p>
+
+<pre class="eg">FileInputStream in = new FileInputStream("Test.as");
+InputStreamReader reader = new InputStreamReader(in);
+ActionScriptFactory fact = new ActionScriptFactory();
+ActionScriptParser parser = fact.newParser();
+ASCompilationUnit unit = parser.parse(reader);</pre>
+
+<p>You can then use the methods of
+{@link uk.co.badgersinfoil.metaas.dom.ASCompilationUnit} to explore the
+types, fields and methods the source code defines.</p>
+
+<p>For example, to list all the methods defined by the type in 'Test.as',
+you could add the following lines to the above example:</p>
+
+<pre class="eg">ASPackage pkg = unit.getPackage();
+ASType type = pkg.getType();
+List methods = type.getMethods();
+for (Iterator i=methods.iterator(); i.hasNext(); ) {
+	ASMethod meth = (ASMethod)i.next();
+	System.out.println(meth.getName());
+}</pre>
+
+<a name="documentation_comments"></a><h2>Documentation Comments</h2>
+
+<p>metaas supports JavaDoc-style comments preceeding API elements tagged with
+the {@link uk.co.badgersinfoil.metaas.dom.Documentable} interface.
+Documentable elements provide the simple description from the comment, and
+access to other, structured information from 'tagged paragraphs', via a
+{@link uk.co.badgersinfoil.metaas.dom.DocComment} object.</p>
+
+<p>For instance, to attach a descriptive comment to a class definition, use
+the following code,</p>
+
+<pre class="eg">ASCompilationUnit unit = proj.newClass("Test");
+ASClassType clazz = (ASClassType)unit.getType();
+clazz.setDescription("Really very useful.");</pre>
+
+<p>The result is ActionScript code like this,</p>
+
+<pre class="eg">package {
+	/**
+	 * Really very useful.
+	 */
+	public class Test {
+	}
+}</pre>
+
+<p>Several elements also supply their own shortcut methods to access relevent
+structures in the doc-comment.  For instance, ASArg allows
+manipulation of @param sections in the enclosing method's documentation,</p>
+
+<pre class="eg">ASMethod meth = clazz.newMethod("test", Visibility.PUBLIC, "void");
+ASArg t = meth.addParam("t", "String");
+t.setDescription("must not be null");</pre>
+
+<p>This will result in ActionScript code like,</p>
+<pre class="eg">	/**
+	 * @param t must not be null
+	 */
+	public functinon test(t:String):void {
+	}</pre>
+
+</body>
+</html>

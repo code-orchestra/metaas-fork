@@ -1,0 +1,322 @@
+<?xml version="1.0"?>
+
+<project id="metaas" xmlns="http://www.badgers-in-foil.co.uk/projects/">
+  <title>metaas</title>
+  <homepage url="http://www.badgers-in-foil.co.uk/projects/metaas/"/>
+  <shortdesc>Java library for manipulating ActionScript source code</shortdesc>
+  <keywords>
+    <keyword>AS2</keyword>
+    <keyword>AS3</keyword>
+    <keyword>Macromedia</keyword>
+    <keyword>Adobe</keyword>
+    <keyword>Flash 9</keyword>
+    <keyword>Action Script</keyword>
+    <keyword>Flex 2</keyword>
+    <keyword>Static metaprogramming</keyword>
+  </keywords>
+
+  <longdesc>
+    <para>metaas provides Java applications with a 'Document Object Model' for
+    ActionScript 3 code. Its primary function is generating code, but it allows
+    existing .as source files to be loaded, and simple modifications to be
+    made.</para>
+
+    <para>Note, metaas does not actually generate Flash movies or ActionScript
+    bytecode.  You will still need the Flash IDE for Flex for that.</para>
+
+    <para>metaas is released under the terms of the Apache License,
+    version 2.0.</para>
+  </longdesc>
+
+  <!--status>
+    <para></para>
+  </status-->
+
+  <section>
+    <title>Why not just use Velocity?</title>
+    <para><ulink url="http://jakarta.apache.org/velocity/">Velocity</ulink>
+    and other templating languages are great for general text-generation
+    tasks, but metaas' special knowledge of ActionScript can make the life of
+    the metaprogrammer easier when handling the complicated stuff.</para>
+
+    <para>For instance, metaas can,</para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">auto-indent generated code</emphasis>, so
+        you don't have to worry how the output will look</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">enforce syntax rules</emphasis>, so
+        attempting to generate syntactically invalid ActionScript should
+        fail</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">allow postprocessing</emphasis>, e.g. an
+        'organise imports' process runs before code is written to disk</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">modify existing code</emphasis>, whereas a
+        basic templating system could only generate new code</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Documentation</title>
+
+    <para>Read the <ulink url="http://maven.badgers-in-foil.co.uk/sites/metaas/apidocs/index.html">API documentation</ulink>.</para>
+  </section>
+
+  <releases freshmeatname="metaas">
+    <release id="0.1" date="2006-07-16">
+      <downloads>
+	<dl file="metaas-0.1.tar.gz">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+	<change>Initial relase</change>
+	<change>Don't rely on the API too much yet</change>
+      </changelog>
+    </release>
+
+    <release id="0.2" date="2006-08-01">
+      <downloads>
+	<dl file="metaas-0.2.tar.gz">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+	<change>Allows access to several parts of the source code which the 0.1
+	release didn't, including fields, interfaces, documentation-comments,
+	superclasses/superinterfaces.  This includes the ability to remove most
+	of these things from the code.</change>
+	<change>Fixed a bug in floating-point number recognition</change>
+	<change>Hopefully fixed byte-order-marker handling</change>
+	<change>Helper methods aid in the construction of control statements
+	like loops and conditionals.</change>
+      </changelog>
+    </release>
+
+    <release id="0.3" date="2006-09-24">
+      <downloads>
+	<dl file="metaas-0.3-bin.zip">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+	<change>API improvements to cover a bit more AS3 syntax</change>
+	<change>Major rewrite to port internals from ANTLRv2 to ANTLRv3</change>
+	<change>Improved code formatting for generated code</change>
+	<change>Preserves formatting of imported code</change>
+        <change>New 'ASProject' helper for managing the generation of groups
+        of files in one run</change>
+        <change>New 'auto import' feature to simplify management of references
+        between files</change>
+      </changelog>
+    </release>
+
+    <release id="0.4" date="2006-12-17">
+      <downloads>
+        <dl file="metaas-0.4-bin.zip">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+	<change>Added support for metadata tags (e.g.
+	<code>[Bindable]</code>)</change>
+	<change>Renamed some interfaces so that use of 'AS' prefix is
+	consistent (e.g. <code>ASSourceFactory</code> is now
+	<code>ActionScriptFactory</code>, <code>CompilationUnit</code> is now
+	<code>ASCompilationUnit</code>).  All 'AS'-prefixed interfaces moded to
+	a 'dom' subpackage. No more renamings planned!</change>
+	<change>Allow for E4X XML-literals, so we no longer raise
+	SyntaxException on encountering one</change>
+	<change>Extracted a common <code>Documentable</code> interface for
+	types and members</change>
+	<change>Fixed incorrect formatting when a single-line-comment is
+	inserted</change>
+	<change>Fixed some bugs in auto-import code</change>
+	<change><code>ASMethod#addParam()</code> now returns <code>ASArg</code>
+	rather than <code>void</code></change>
+        <change>Now supports the <code>default xml namespace</code>
+        statement</change>
+      </changelog>
+    </release>
+
+    <release id="0.5" date="2007-01-30">
+      <downloads>
+        <dl file="metaas-0.5-bin.zip">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+        <change>Seperated auto-import processing out from
+        <code>ActionScriptProject#writeAll()</code> - the new
+        <code>performAutoImport()</code> method must now be used</change>
+        <change>Fixed several bugs in interface-related code generation</change>
+        <change>Added a 'classpath' to <code>ActionScriptProject</code> to
+        support the auto-import process with project-external code</change>
+	<change>Allow for regular-expression-literals, so we no longer raise
+	SyntaxException on encountering one</change>
+	<change>Assorted parser fixes to accept more examples of valid AS
+        syntax, including several instances of 'keywords' that are also valid
+        as identifiers</change>
+      </changelog>
+    </release>
+
+    <release id="0.6" date="2007-02-17">
+      <downloads>
+        <dl file="metaas-0.6-bin.zip">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+        <change>Fixed the embarrassing bug that broke example code on the
+        documentation front page</change>
+        <change>Added representations for most types of ActionScript statement,
+        so that the application can modify these.</change>
+        <change>Added a method to list the ActionScript statements in a
+        StatementContainer</change>
+      </changelog>
+    </release>
+
+    <release id="0.7" date="2007-03-17">
+      <downloads>
+        <dl file="metaas-0.7-bin.zip">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+        <change>Added more support for creating and reading JavaDoc-style
+        documentation comments, including shortcuts for describing method
+        parameters.</change>
+        <change>Fixed a brace-formatting bug in for-loops</change>
+        <change>Added support for parsing and creating 'rest' parameters which
+        use the '<code>...</code>' operator.</change>
+        <change>Prevented an error calling <code>getType()</code> on an ASArg
+        declared with type '<code>*</code>'.</change>
+        <change>Fixed broken formatting when an expression is added to an
+        <code>ASReturnStatement</code>.</change>
+      </changelog>
+    </release>
+
+    <release id="0.8" date="2008-03-21">
+      <downloads>
+        <dl file="metaas-0.8-bin.zip">Compiled .jar and API docs</dl>
+      </downloads>
+      <changelog>
+        <change>Switched to Apache License, version 2.0</change>
+        <change>Initial support for ActionScript expressions in the DOM</change>
+        <change>Provide for <code>dynamic</code> and <code>final</code> class
+        modifiers</change>
+        <change>Support for <code>break</code>, <code>continue</code>,
+        <code>default xml namespace</code>
+        <code>try catch finally</code> and
+        <code>throw</code> statements</change>
+        <change>Fix broken assumptions that statement bodies will be
+        code-blocks</change>
+        <change>Many bugs fixed!</change>
+      </changelog>
+    </release>
+  </releases>
+
+  <section>
+    <title>Code</title>
+
+    <para>To obtain a copy of the latest code, use the
+    <ulink url="http://subversion.tigris.org/">Subversion<alt>The Subversion version control system</alt></ulink>
+    repository at the URL:</para>
+
+    <para><literal>http://svn.badgers-in-foil.co.uk/metaas/trunk/</literal></para>
+    
+    <para>See also the
+    <ulink url="http://maven.badgers-in-foil.co.uk/sites/metaas/">Maven2-generated
+    metaas code reports site</ulink>.</para>
+  </section>
+
+  <section>
+    <title>Contact</title>
+
+    <para>If you have any questions or have some code to contribute, please
+    subscribe to the
+    <ulink url="http://lists.badgers-in-foil.co.uk/mailman/listinfo/metaas-dev">mailing
+    list<alt>metaas-development mailing list subscription
+    manager</alt></ulink>.</para>
+  </section>
+
+  <section>
+    <title>Due Credit</title>
+    
+    <para>metaas was inspired by the
+    <ulink url="http://ws.apache.org/jaxme/js/index.html">JaxMe JavaSource</ulink>
+    framework for generating Java code.</para>
+
+    <para>metaas was originally based on the ActionScript 3
+    <ulink url="http://antlr.org/">ANTLR<alt>ANother Tool for Language Recognition</alt></ulink>
+    grammer from the <ulink url="http://asdt.org/">ASDT<alt>ActionScript Development Tool</alt></ulink>
+    project, though the metaas fork is now significantly different.  Authorship of the
+    <ulink url="http://svn.sourceforge.net/viewcvs.cgi/aseclipseplugin/org.asdt.astview/src/org/asdt/core/internal/antlr/as3.g?view=markup&amp;rev=15">original as3 grammar<alt>as3.g source code in the ASDT repository</alt></ulink>
+    appears to be claimed by Martin Schnabel.  Many thanks to him, and the
+    other ASDT authors for their hard work.</para>
+  </section>
+
+  <related>
+    <relation kind="Projects using metaas">
+      <relatedproject name="VASGen">
+        <homepage url="http://selfmummy.com/vasgen/"/>
+      </relatedproject>
+      <relatedproject name="CairngormFlex Assistant">
+        <homepage url="http://cairngormflex.sourceforge.net/"/>
+      </relatedproject>
+      <relatedproject name="wsdl2as">
+        <homepage url="http://maven.badgers-in-foil.co.uk/sites/wsdl2as/"/>
+      </relatedproject>
+      <relatedproject name="asxsd">
+        <homepage url="http://maven.badgers-in-foil.co.uk/sites/asxsd/"/>
+      </relatedproject>
+      <relatedproject name="AsDoclet">
+        <homepage url="http://asdoclet.fluffnstuff.org/"/>
+      </relatedproject>
+      <relatedproject name="Asycle">
+        <homepage url="http://asycle.fluffnstuff.org/"/>
+      </relatedproject>
+    </relation>
+
+    <relation kind="Code Generators">
+      <relatedproject name="JaxMe JavaSource">
+        <homepage url="http://ws.apache.org/jaxme/js/index.html"/>
+      </relatedproject>
+      <relatedproject name="StringTemplate">
+        <homepage url="http://www.stringtemplate.org/"/>
+      </relatedproject>
+    </relation>
+
+    <relation kind="Websites">
+      <relatedproject name="Code Generation Network">
+        <homepage url="http://www.codegeneration.net/"/>
+      </relatedproject>
+    </relation>
+
+    <relation kind="Language Metamodels / Document Object Models">
+      <relatedproject name="Eclipse JDT DOM">
+        <homepage url="http://download.eclipse.org/downloads/documentation/2.0/html/plugins/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/dom/package-summary.html"/>
+      </relatedproject>
+
+      <relatedproject name="Spoon">
+        <homepage url="http://spoon.gforge.inria.fr/"/>
+      </relatedproject>
+
+      <relatedproject name="Sun's CodeModel">
+        <homepage url="https://codemodel.dev.java.net/"/>
+      </relatedproject>
+
+      <relatedproject name="ASPOJO">
+        <homepage url="http://code.google.com/p/aspojo/"/>
+      </relatedproject>
+    </relation>
+  </related>
+
+  <section id="quotes">
+    <title>What the Industry is Saying...</title>
+
+    <blockquote>
+      <attribution><ulink url="http://osflash.org/pipermail/osflash_osflash.org/2006-August/010146.html">Rostislav A. Siryk</ulink></attribution>
+
+      <para>People here are strange human beings; they've been gave up a long
+      time ago on using friendly timelines and now discussing only freak things
+      like "getting as2 out of java code" rather than fancy "make my movie
+      smart".</para>
+    </blockquote>
+  </section>
+</project>
+
+<!--
+vim:shiftwidth=2:softtabstop=2
+-->

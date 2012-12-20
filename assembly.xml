@@ -1,0 +1,31 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+   <format>zip</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+      <scope>runtime</scope>
+    </dependencySet>
+  </dependencySets>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>LICENSE.txt</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <!-- lets hope the JavaDoc is there -->
+    <fileSet>
+      <directory>target/site/apidocs/</directory>
+      <outputDirectory>apidoc</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>
