@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class CommentUtils {
 
-    private static Comment convertStringToComment(String str) {
+    public static Comment convertStringToComment(String str) {
         if (stringIsNullOrWhitespace(str)) {
             return null;
         }

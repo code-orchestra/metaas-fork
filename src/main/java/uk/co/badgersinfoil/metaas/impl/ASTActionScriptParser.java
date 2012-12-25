@@ -25,7 +25,8 @@ import java.util.List;
 
 import org.antlr.runtime.ParserRuleReturnScope;
 import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.Tree;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
 import org.asdt.core.internal.antlr.AS3Parser;
 import uk.co.badgersinfoil.metaas.ActionScriptParser;
 import uk.co.badgersinfoil.metaas.EmptySourceFileException;
@@ -61,6 +62,28 @@ public class ASTActionScriptParser implements ActionScriptParser {
 		try {
             ParserRuleReturnScope returnScope = parser.statementList();
             if (returnScope == null) {
+                // CO-4910
+                // returnScope can be null only in case when first token in regular stream is EOF
+                // It can be in case of empty source or in case when text is fully commented
+
+                ASTCommentList astCommentList = new ASTCommentList();
+                List<Comment> comments = astCommentList.getComments();
+
+                TokenStream tokenStream = parser.getTokenStream();
+                tokenStream.rewind();
+                // tokenStream is fully loaded so we can iterate over it's tokens
+                for (int i = 0; i < tokenStream.size(); i++) {
+                    Token token = tokenStream.get(i);
+                    if (token.getChannel() == Token.HIDDEN_CHANNEL) {
+                        String tokenText = token.getText();
+                        comments.add(CommentUtils.convertStringToComment(tokenText));
+                    }
+                }
+
+                if (!comments.isEmpty()) {
+                    return astCommentList;
+                }
+
                 return null;
             }
 			cu = AS3FragmentParser.tree(returnScope);
