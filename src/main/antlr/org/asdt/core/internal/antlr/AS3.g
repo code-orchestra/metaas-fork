@@ -347,6 +347,8 @@ memberOnSameLine
 	| NAMESPACE!
 	| IMPORT!
 	| FINAL!
+	| VIRTUAL!
+	| NATIVE!
 	| INCLUDE
 	) { input.rewind(marker); }
 	;
