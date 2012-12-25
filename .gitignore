@@ -1,0 +1,4 @@
+/target
+*.iws
+/src/test/java/uk/co/badgersinfoil/metaas/TempTest.java
+/src/test/resources/Test.as

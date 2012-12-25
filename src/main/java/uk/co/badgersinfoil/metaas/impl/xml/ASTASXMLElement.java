@@ -119,8 +119,12 @@ public class ASTASXMLElement extends ASTScriptElement implements ASXMLElement {
         // First AST child is the element's name
         int firstElementChild = 1;
         if (!isEmpty()) {
-            // Second AST child is the closing element's name in case of not empty element
-            firstElementChild = 2;
+            while (ast.getChild(firstElementChild).getType() == E4XParser.XML_ATTRIBUTE) {
+                // Attributes are placed before closing tag, so we skip them while searching for closing tag
+                firstElementChild++;
+            }
+            // Second AST child (not including attributes) is the closing element's name in case of not empty element
+            firstElementChild++;
         }
         // XML_LIST has neither name, nor closing name
         if (ast.getType() == E4XParser.XML_LIST) {
