@@ -354,11 +354,24 @@ public class ASTStatementList extends ASTScriptElement implements ASBlock {
             }
             result.add(StatementBuilder.build(listTree));
             if (!i.hasNext()) {
+                List<Comment> singleComment = CommentUtils.getCommentAfter(listTree);
+                boolean selfCommentExists = !(singleComment == null || singleComment.isEmpty());
                 commentList = CommentUtils.getCommentAfter(listTree, false);
                 if (commentList != null) {
+                    if (selfCommentExists) {
+                        commentList.remove(0);
+                    }
                     for (Comment aCommentList : commentList) {
                         result.add(new ASTASRemarkStatement(aCommentList));
                     }
+                }
+            }
+        }
+        if (result.isEmpty()) { // Empty block still can have comments inside
+            List<Comment> commentsAfterToken = CommentUtils.getCommentsAfterToken(ast.getStartToken(), false);
+            if (commentsAfterToken != null) {
+                for (Comment aCommentList : commentsAfterToken) {
+                    result.add(new ASTASRemarkStatement(aCommentList));
                 }
             }
         }

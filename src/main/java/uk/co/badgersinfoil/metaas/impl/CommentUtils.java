@@ -107,7 +107,13 @@ public class CommentUtils {
     }
 
     public static List<Comment> getCommentAfter(LinkedListTree tree, boolean singleLine) {
-        LinkedListToken llt = tree.getStopToken();
+        LinkedListToken start = tree.getStopToken();
+        return getCommentsAfterToken(start, singleLine);
+    }
+
+    public static List<Comment> getCommentsAfterToken(LinkedListToken start, boolean singleLine) {
+        LinkedListToken llt = start;
+
         List<String> comments = new ArrayList<String>();
         List<Comment> result = new ArrayList<Comment>();
 
